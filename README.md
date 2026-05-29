@@ -92,6 +92,128 @@ ClientPilot addresses this problem by providing a streamlined CRM system that en
 * express-validator
 
 ---
+## Setup Instructions
+
+### Prerequisites
+
+Before running the project, ensure the following are installed:
+
+* Node.js (v18 or later)
+* npm (comes with Node.js)
+* MongoDB Atlas account or local MongoDB installation
+* Git
+
+---
+
+### Clone the Repository
+
+```bash
+git clone https://github.com/aditisingh1027/FUTURE_FS_02.git
+cd FUTURE_FS_02
+```
+
+---
+
+### Install Dependencies
+
+Install dependencies for both frontend and backend:
+
+```bash
+npm run install-all
+```
+
+Alternatively:
+
+```bash
+cd client
+npm install
+
+cd ../server
+npm install
+```
+
+---
+
+### Configure Environment Variables
+
+#### Backend
+
+Create a `.env` file inside the `server` folder:
+
+```env
+PORT=5000
+NODE_ENV=development
+CLIENT_URL=http://localhost:5173
+MONGO_URI=your_mongodb_connection_string
+JWT_SECRET=your_secure_secret_key
+JWT_EXPIRE=30d
+```
+
+#### Frontend
+
+Create a `.env` file inside the `client` folder:
+
+```env
+VITE_API_BASE_URL=http://localhost:5000/api
+```
+
+---
+
+### Run the Application
+
+From the project root:
+
+```bash
+npm run dev
+```
+
+Or run frontend and backend separately:
+
+#### Backend
+
+```bash
+cd server
+npm run dev
+```
+
+#### Frontend
+
+```bash
+cd client
+npm run dev
+```
+
+---
+
+### Access the Application
+
+Frontend:
+
+```text
+http://localhost:5173
+```
+
+Backend API:
+
+```text
+http://localhost:5000
+```
+
+---
+
+### Build for Production
+
+Frontend:
+
+```bash
+npm --prefix client run build
+```
+
+Backend:
+
+```bash
+npm --prefix server run start
+```
 
 ## System Architecture
 
