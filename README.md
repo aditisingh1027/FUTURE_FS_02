@@ -200,4 +200,8 @@ npm run dev
 
 ## Author
 
-Developed by **Aditi Kumari Singh** as a portfolio project to demonstrate full-stack software engineering skills, secure backend development, database design, and business workflow implementation using the MERN stack.
+## Author
+
+Developed by **Aditi Kumari Singh** as part of the Full Stack Development Internship Program at Future Interns.
+
+This project focuses on building a real-world lead management system that demonstrates full-stack application development, secure authentication, database management, API integration, and modern frontend engineering using the MERN stack.
