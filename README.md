@@ -1,129 +1,203 @@
-# Antigravity CRM
+# ClientPilot
 
-Antigravity CRM is a modern, production-ready MERN stack lead management application built for portfolio showcase and real-world workflow.
+**ClientPilot** is a full-stack Lead Management and CRM application designed to help freelancers, agencies, and small businesses efficiently manage client inquiries generated through websites, referrals, and marketing channels.
 
-## Project Overview
+The platform provides a centralized workspace for tracking prospects, managing follow-ups, recording client interactions, and monitoring lead conversion progress through a structured sales pipeline. The project was built to simulate a real-world business workflow while demonstrating modern full-stack development practices.
 
-This project includes:
-- A polished **React + Vite** frontend with responsive dashboards, lead management, filters, mobile-friendly navigation, and charts.
-- A secure **Node.js + Express** backend with **JWT auth**, cookie-based sessions, validation, and role-based access controls.
-- A **MongoDB** data layer for leads, users, activity logs, and follow-up scheduling.
+---
 
-## Tech Stack
+## Problem Statement
 
-- **Frontend:** React, Vite, Tailwind CSS v4, React Router DOM, Axios, React Hot Toast, Recharts
-- **Backend:** Node.js, Express, MongoDB, Mongoose, JWT, bcryptjs, Helmet, express-rate-limit, express-validator
+Businesses often receive inquiries from multiple sources such as website contact forms, social media campaigns, referrals, and email outreach. Managing these leads manually through spreadsheets or emails can result in missed follow-ups, inconsistent tracking, and lost business opportunities.
+
+ClientPilot addresses this problem by providing a streamlined CRM system that enables users to:
+
+* Organize incoming leads in a centralized database
+* Track lead progression through different pipeline stages
+* Maintain conversation history and follow-up records
+* Monitor lead sources and conversion performance
+* Improve visibility into ongoing sales activities
+
+---
 
 ## Key Features
 
-- Secure JWT authentication with HTTP-only cookies
-- Role-based access control for `sales`, `manager`, and `admin`
-- Mobile-friendly sidebar and dashboard layout
-- Lead creation, editing, deletion, notes, and status updates
-- Server-side search, status/source filtering, and sorting
-- Dashboard analytics with status/source charts and follow-up tracking
-- API validation, security headers, and rate limiting
+### Authentication & Security
 
-## Repository Structure
+* JWT-based authentication
+* Secure password hashing using bcrypt
+* Role-based access control (Admin, Manager, Sales)
+* Protected API routes
+* Security middleware including Helmet and Rate Limiting
+
+### Lead Management
+
+* Create, update, and delete leads
+* Lead source tracking
+* Pipeline stage management
+* Lead ownership assignment
+* Follow-up scheduling
+
+### Conversation Tracking
+
+* Maintain interaction history for every lead
+* Timestamped notes and updates
+* Activity timeline for auditability
+
+### Analytics Dashboard
+
+* Total prospects overview
+* Conversion metrics
+* Lead source distribution
+* Pipeline stage breakdown
+* Upcoming follow-up tracking
+
+### Search & Filtering
+
+* Search by lead name or email
+* Filter by status and source
+* Server-side query handling for scalability
+
+### User Experience
+
+* Responsive design across desktop, tablet, and mobile devices
+* Consistent UI components
+* Loading, error, and empty states
+* Intuitive navigation and dashboard layout
+
+---
+
+## Technology Stack
+
+### Frontend
+
+* React.js
+* Vite
+* Tailwind CSS v4
+* React Router DOM
+* Axios
+* React Hot Toast
+* Recharts
+
+### Backend
+
+* Node.js
+* Express.js
+* MongoDB
+* Mongoose
+* JWT Authentication
+* bcryptjs
+* Helmet
+* express-rate-limit
+* express-validator
+
+---
+
+## System Architecture
+
+ClientPilot follows a modular MERN architecture with clear separation of concerns.
 
 ```text
-FUTURE_FS_02/
-├── package.json          # Root scripts for install and dev orchestration
-├── README.md             # Project overview and deployment instructions
-├── client/               # React/Vite frontend
-│   ├── package.json
-│   ├── .env.example
-│   └── src/
-└── server/               # Express backend
-    ├── package.json
-    ├── .env.example
-    ├── controllers/
-    ├── middleware/
-    ├── models/
-    ├── routes/
-    └── utils/
+Client (React)
+      │
+      ▼
+REST API (Express)
+      │
+      ▼
+Business Logic Layer
+      │
+      ▼
+MongoDB Database
 ```
 
-## Installation
+The application is structured using reusable components, controllers, middleware, and service-oriented patterns to improve maintainability and scalability.
 
-### Prerequisites
-- Node.js 18+ installed
-- MongoDB instance available locally or via MongoDB Atlas
+---
 
-### Install dependencies
-From the project root:
+## Database Design
+
+### Users
+
+Stores application users and their access roles.
+
+### Leads
+
+Stores prospect information including:
+
+* Contact details
+* Lead source
+* Pipeline stage
+* Follow-up schedules
+* Notes and interactions
+
+### Activities
+
+Stores system-generated activity logs for lead tracking and auditing purposes.
+
+---
+
+## Learning Outcomes
+
+Through this project, I gained hands-on experience with:
+
+* Full-stack application development using the MERN stack
+* Authentication and authorization workflows
+* REST API design and implementation
+* Database modeling with MongoDB
+* Secure application development practices
+* Business workflow automation
+* State management and frontend architecture
+* Deployment and production readiness
+
+---
+
+## Local Setup
+
+### Install Dependencies
+
 ```bash
 npm run install-all
 ```
 
-### Environment Variables
-Copy the env templates and customize values:
+### Configure Environment Variables
 
-```bash
-cp server/.env.example server/.env
-cp client/.env.example client/.env
-```
+Server:
 
-#### `server/.env`
 ```env
 PORT=5000
 NODE_ENV=development
 CLIENT_URL=http://localhost:5173
-MONGO_URI=mongodb://localhost:27017/antigravity_crm
-JWT_SECRET=your_jwt_secret_here
+MONGO_URI=your_mongodb_connection_string
+JWT_SECRET=your_secure_secret
 JWT_EXPIRE=30d
 ```
 
-#### `client/.env`
+Client:
+
 ```env
 VITE_API_BASE_URL=http://localhost:5000/api
 ```
 
-## Development
-
-Run both the frontend and backend together from the root:
+### Run Development Environment
 
 ```bash
 npm run dev
 ```
 
-- Frontend: `http://localhost:5173`
-- Backend: `http://localhost:5000`
+---
 
-## Production Build
+## Future Enhancements
 
-Build the frontend bundle:
+* Email notification integration
+* Automated follow-up reminders
+* Lead assignment workflows
+* Advanced reporting and analytics
+* Export functionality (CSV/PDF)
+* Calendar integration
+* Real-time notifications
 
-```bash
-npm --prefix client run build
-```
+---
 
-Start the server:
+## Author
 
-```bash
-npm --prefix server run start
-```
-
-## Deployment
-
-### Vercel + Custom Backend
-- Deploy the `client/` app to Vercel or any static host.
-- Deploy `server/` to Heroku, Railway, Render, or a VPS.
-- Set environment variables in the host for `MONGO_URI`, `JWT_SECRET`, `CLIENT_URL`, and `PORT`.
-
-### Full-stack Deployment Checklist
-- Set `NODE_ENV=production` on the server
-- Use a secure `JWT_SECRET`
-- Configure CORS to allow only your frontend origin
-- Enable HTTPS for secure cookie transmission
-- Use environment-specific values for `MONGO_URI`
-
-## Notes for Portfolio
-
-This repository is structured for a polished developer showcase:
-- Clear frontend/backend separation
-- Reusable UI components and consistent loading/empty states
-- Strong API validation and security middleware
-- Easy local setup and deployment guidance
-
-If you want, I can also add a short project demo section with screenshots and feature highlights. 
+Developed by **Aditi Kumari Singh** as a portfolio project to demonstrate full-stack software engineering skills, secure backend development, database design, and business workflow implementation using the MERN stack.
