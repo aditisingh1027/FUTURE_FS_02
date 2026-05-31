@@ -31,6 +31,15 @@ const LeadDetailPage = () => {
   const [addingNote, setAddingNote] = useState(false);
   const [editStatus, setEditStatus] = useState('');
   const [savingStatus, setSavingStatus] = useState(false);
+  const [activities, setActivities] = useState([]);
+  const [loadingActivities, setLoadingActivities] = useState(true);
+
+  const ACTIVITY_TYPE_LABELS = {
+    creation: 'Created lead',
+    note: 'Note added',
+    status_change: 'Status updated',
+    deletion: 'Lead deleted',
+  };
 
   const fetchLead = async () => {
     try {
@@ -45,7 +54,22 @@ const LeadDetailPage = () => {
     }
   };
 
-  useEffect(() => { fetchLead(); }, [id]);
+  const fetchActivities = async () => {
+    setLoadingActivities(true);
+    try {
+      const res = await leadService.getActivities(id);
+      setActivities(res.data.activities);
+    } catch {
+      toast.error('Unable to load activity timeline.');
+    } finally {
+      setLoadingActivities(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchLead();
+    fetchActivities();
+  }, [id]);
 
   const handleStatusChange = async (newStatus) => {
     setEditStatus(newStatus);
@@ -54,6 +78,7 @@ const LeadDetailPage = () => {
       await leadService.updateLead(id, { status: newStatus });
       setLead((prev) => ({ ...prev, status: newStatus }));
       toast.success('Status updated.');
+      fetchActivities();
     } catch {
       toast.error('Failed to update status.');
     } finally {
@@ -70,6 +95,7 @@ const LeadDetailPage = () => {
       setLead((prev) => ({ ...prev, notes: res.data.lead.notes }));
       setNoteText('');
       toast.success('Note added.');
+      fetchActivities();
     } catch {
       toast.error('Failed to add note.');
     } finally {
@@ -204,6 +230,42 @@ const LeadDetailPage = () => {
         ) : (
           <div className="rounded-3xl border border-white/10 bg-[#08121f] p-8 text-center text-sm text-dark-50/60">
             No notes yet. Add your first note to keep the lead history in one place.
+          </div>
+        )}
+      </div>
+
+      <div className="rounded-3xl bg-[#08121f]/90 border border-white/10 p-6">
+        <div className="flex items-center justify-between gap-4 mb-6">
+          <div>
+            <h2 className="text-xl font-bold text-white">Activity Timeline</h2>
+            <p className="text-sm text-dark-50/60">Recent actions and timeline events for this lead.</p>
+          </div>
+        </div>
+
+        {loadingActivities ? (
+          <div className="flex items-center justify-center py-12">
+            <div className="w-8 h-8 rounded-full border-2 border-brand-500 border-t-transparent animate-spin" />
+          </div>
+        ) : activities.length ? (
+          <div className="space-y-4">
+            {activities.map((activity) => (
+              <div key={activity._id} className="rounded-3xl border border-white/10 bg-[#09121f] p-5">
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                  <div>
+                    <p className="text-sm font-semibold text-white">{ACTIVITY_TYPE_LABELS[activity.type] || 'Activity'}</p>
+                    <p className="mt-1 text-sm text-dark-100">{activity.description}</p>
+                  </div>
+                  <div className="text-xs text-dark-50/60 sm:text-right">
+                    <p>{activity.performedBy?.name || 'System'}</p>
+                    <p>{activity.createdAt ? new Date(activity.createdAt).toLocaleString() : 'Unknown time'}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="rounded-3xl border border-white/10 bg-[#08121f] p-8 text-center text-sm text-dark-50/60">
+            No activity has been recorded yet for this lead.
           </div>
         )}
       </div>

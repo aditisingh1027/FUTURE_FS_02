@@ -1,7 +1,7 @@
 const express = require('express');
 const { body, param, query } = require('express-validator');
 const router = express.Router();
-const { getLeads, getLeadById, createLead, updateLead, deleteLead, addLeadNote } = require('../controllers/leadController');
+const { getLeads, getLeadById, createLead, updateLead, deleteLead, addLeadNote, getLeadActivities } = require('../controllers/leadController');
 const { protect } = require('../middleware/authMiddleware');
 const validateRequest = require('../middleware/validationMiddleware');
 
@@ -54,6 +54,9 @@ router.route('/:id')
   .get([param('id').isMongoId().withMessage('Invalid lead id')], validateRequest, getLeadById)
   .put([param('id').isMongoId().withMessage('Invalid lead id'), ...updateLeadValidationRules], validateRequest, updateLead)
   .delete([param('id').isMongoId().withMessage('Invalid lead id')], validateRequest, deleteLead);
+
+router.route('/:id/activities')
+  .get([param('id').isMongoId().withMessage('Invalid lead id')], validateRequest, getLeadActivities);
 
 router.route('/:id/notes')
   .post([

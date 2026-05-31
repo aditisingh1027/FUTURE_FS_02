@@ -71,10 +71,10 @@ const LoginPage = () => {
           <div className="px-8 py-10 bg-[#07101f] border-b border-white/10">
             <div className="flex items-center gap-3 mb-8">
               <div className="w-12 h-12 rounded-3xl bg-brand-600 flex items-center justify-center text-xl font-bold text-white">
-                A
+                C
               </div>
               <div>
-                <p className="text-xs uppercase tracking-[0.3em] text-cyan-300/80">Antigravity CRM</p>
+                <p className="text-xs uppercase tracking-[0.3em] text-cyan-300/80">ClientPilot</p>
                 <h1 className="mt-1 text-3xl font-extrabold tracking-tight text-white">Sign in</h1>
               </div>
             </div>

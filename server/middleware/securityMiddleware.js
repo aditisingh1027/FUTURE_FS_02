@@ -1,9 +1,13 @@
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 
+// Environment-aware rate limiting
+const isDevelopment = process.env.NODE_ENV !== 'production';
+const maxRequests = isDevelopment ? 1000 : 100;
+
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 100,
+  max: maxRequests,
   standardHeaders: true,
   legacyHeaders: false,
   message: {

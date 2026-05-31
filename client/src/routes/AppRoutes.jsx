@@ -7,6 +7,7 @@ import DashboardPage from '../pages/DashboardPage';
 import LeadsPage from '../pages/LeadsPage';
 import LeadDetailPage from '../pages/LeadDetailPage';
 import CreateLeadPage from '../pages/CreateLeadPage';
+import ProfilePage from '../pages/ProfilePage';
 
 const AppRoutes = () => (
   <Routes>
@@ -25,6 +26,7 @@ const AppRoutes = () => (
     >
       <Route index element={<Navigate to="/dashboard" replace />} />
       <Route path="dashboard" element={<DashboardPage />} />
+      <Route path="profile" element={<ProfilePage />} />
       <Route path="leads" element={<LeadsPage />} />
       <Route path="leads/create" element={<CreateLeadPage />} />
       <Route path="leads/:id" element={<LeadDetailPage />} />

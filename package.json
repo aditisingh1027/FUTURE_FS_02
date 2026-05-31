@@ -1,13 +1,15 @@
 {
-  "name": "antigravity-crm-root",
+  "name": "clientpilot-root",
   "version": "1.0.0",
   "private": true,
-  "description": "Root orchestration for Antigravity CRM",
+  "description": "Root orchestration for ClientPilot",
   "scripts": {
     "install-all": "npm install && npm install --prefix client && npm install --prefix server",
     "client": "npm run dev --prefix client",
     "server": "npm run dev --prefix server",
-    "dev": "concurrently \"npm run server\" \"npm run client\""
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "seed": "cd server && node seed.js",
+    "seed:clear": "cd server && node seed.js --clear"
   },
   "devDependencies": {
     "concurrently": "^8.2.2"

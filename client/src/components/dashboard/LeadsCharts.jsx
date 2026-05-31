@@ -36,7 +36,7 @@ const LeadsCharts = ({ statusData = [], sourceData = [], loading }) => {
 
   return (
     <div className="grid gap-4 lg:grid-cols-2">
-      <div className="glass-card rounded-3xl border border-white/10 bg-[#07101f] p-6">
+      <div className="rounded-3xl border border-white/10 bg-[#07101f] p-6">
         <div className="flex items-center justify-between gap-4 mb-6">
           <div>
             <p className="text-sm uppercase tracking-[0.24em] text-dark-50/60">Pipeline Stage</p>
@@ -68,7 +68,7 @@ const LeadsCharts = ({ statusData = [], sourceData = [], loading }) => {
         )}
       </div>
 
-      <div className="glass-card rounded-3xl border border-white/10 bg-[#07101f] p-6">
+      <div className="rounded-3xl border border-white/10 bg-[#07101f] p-6">
         <div className="flex items-center justify-between gap-4 mb-6">
           <div>
             <p className="text-sm uppercase tracking-[0.24em] text-dark-50/60">Prospect Source</p>

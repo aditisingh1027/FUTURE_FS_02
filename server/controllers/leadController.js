@@ -1,4 +1,5 @@
 const Lead = require('../models/Lead');
+const Activity = require('../models/Activity');
 const { validateLeadInput } = require('../validators/leadValidator');
 const { logActivity } = require('../services/activityService');
 
@@ -275,6 +276,36 @@ const addLeadNote = async (req, res, next) => {
   }
 };
 
+// @desc    Get activity timeline for a lead
+// @route   GET /api/leads/:id/activities
+// @access  Private
+const getLeadActivities = async (req, res, next) => {
+  try {
+    const lead = await Lead.findById(req.params.id);
+    if (!lead) {
+      res.status(404);
+      throw new Error('Lead not found');
+    }
+
+    // Role check: Sales reps can only view activities for their own leads
+    if (req.user.role === 'sales' && lead.assignedTo.toString() !== req.user.id) {
+      res.status(403);
+      throw new Error('Not authorized to view this lead activity timeline');
+    }
+
+    const activities = await Activity.find({ lead: req.params.id })
+      .populate('performedBy', 'name email role')
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({
+      success: true,
+      activities,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getLeads,
   getLeadById,
@@ -282,4 +313,5 @@ module.exports = {
   updateLead,
   deleteLead,
   addLeadNote,
+  getLeadActivities,
 };

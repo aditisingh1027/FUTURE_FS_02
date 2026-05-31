@@ -26,13 +26,23 @@ const LeadModal = ({ lead, onClose, onSaved }) => {
     if (!form.name.trim()) { toast.error('Name is required.'); return; }
     setLoading(true);
     try {
+      // Transform `notes` into the format expected by the server:
+      // server expects `notes` to be an array of objects: [{ content: '...' }]
+      const payload = { ...form };
+      if (payload.notes && typeof payload.notes === 'string') {
+        const trimmed = payload.notes.trim();
+        if (trimmed.length) payload.notes = [{ content: trimmed }];
+        else delete payload.notes;
+      }
+
       if (isEdit) {
-        await leadService.updateLead(lead._id, form);
+        await leadService.updateLead(lead._id, payload);
         toast.success('Lead updated.');
       } else {
-        await leadService.createLead(form);
+        await leadService.createLead(payload);
         toast.success('Lead created!');
       }
+
       onSaved();
       onClose();
     } catch (err) {
@@ -43,9 +53,9 @@ const LeadModal = ({ lead, onClose, onSaved }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/60 backdrop-blur-sm" onClick={onClose}>
+      <div className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/65" onClick={onClose}>
       <div
-        className="w-full max-w-lg glass-card rounded-2xl border border-white/10 p-7 shadow-2xl"
+        className="w-full max-w-lg rounded-3xl bg-[#09101f] border border-white/10 p-7 shadow-lg"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between mb-6">

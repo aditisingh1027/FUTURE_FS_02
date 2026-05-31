@@ -45,12 +45,11 @@ const Sidebar = ({ collapsed, mobileOpen, onToggle, onCloseMobile }) => {
       >
         <div className={`flex items-center gap-3 px-4 py-5 border-b border-white/5 ${collapsed ? 'justify-center' : ''}`}>
           <div className="w-9 h-9 min-w-[2.25rem] rounded-xl bg-brand-600 flex items-center justify-center font-bold text-white text-sm">
-            A
+            C
           </div>
           {!collapsed && (
             <div className="overflow-hidden">
-              <p className="font-extrabold text-sm text-white tracking-tight truncate">Antigravity</p>
-              <p className="text-xs text-dark-50/50 font-medium truncate">CRM</p>
+              <p className="font-extrabold text-sm text-white tracking-tight truncate">ClientPilot</p>
             </div>
           )}
         </div>
@@ -101,13 +100,21 @@ const Sidebar = ({ collapsed, mobileOpen, onToggle, onCloseMobile }) => {
             </button>
           ) : (
             <div className="glass-card rounded-2xl p-3 flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg bg-brand-600 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
-                {user?.name?.charAt(0)?.toUpperCase() || 'U'}
-              </div>
-              <div className="flex-1 overflow-hidden min-w-0">
-                <p className="text-xs font-semibold text-white truncate">{user?.name}</p>
-                <p className="text-xs text-dark-50/60 capitalize truncate">{user?.role}</p>
-              </div>
+              <button
+                type="button"
+                onClick={() => navigate('/profile')}
+                className="flex flex-1 items-center gap-3 text-left"
+                title="Open profile"
+              >
+                <div className="w-8 h-8 rounded-lg bg-brand-600 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
+                  {user?.name?.charAt(0)?.toUpperCase() || 'U'}
+                </div>
+                <div className="flex-1 overflow-hidden min-w-0">
+                  <p className="text-xs font-semibold text-white truncate">{user?.name}</p>
+                  <p className="text-xs text-dark-50/60 capitalize truncate">{user?.role}</p>
+                  <p className="text-[11px] text-brand-300 mt-1">View profile</p>
+                </div>
+              </button>
               <button
                 onClick={handleLogout}
                 title="Logout"

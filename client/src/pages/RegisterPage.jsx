@@ -57,10 +57,10 @@ const RegisterPage = () => {
         {/* Logo */}
         <div className="flex items-center gap-3 justify-center mb-8">
           <div className="w-11 h-11 rounded-2xl bg-brand-600 flex items-center justify-center font-bold text-white text-lg">
-            A
+            C
           </div>
           <div>
-            <h1 className="font-extrabold text-xl text-white tracking-tight">Antigravity CRM</h1>
+            <h1 className="font-extrabold text-xl text-white tracking-tight">ClientPilot</h1>
             <p className="text-xs text-dark-50/50 font-medium">Create your workspace</p>
           </div>
         </div>

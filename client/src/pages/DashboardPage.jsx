@@ -62,7 +62,7 @@ const DashboardPage = () => {
       {loadingStats ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
           {Array(4).fill(0).map((_, i) => (
-            <div key={i} className="glass-card rounded-2xl p-6 h-28 animate-pulse bg-dark-800/40" />
+            <div key={i} className="rounded-2xl p-6 h-28 bg-[#0e1724] animate-pulse" />
           ))}
         </div>
       ) : (

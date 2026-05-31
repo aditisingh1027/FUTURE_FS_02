@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
 import Sidebar from '../components/common/Sidebar';
 
 const MainLayout = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const navigate = useNavigate();
 
   return (
     <div className="min-h-screen bg-dark-950">
@@ -27,15 +28,15 @@ const MainLayout = () => {
               <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
             </svg>
           </button>
-          <div className="text-base font-semibold text-white">Antigravity CRM</div>
+          <div className="text-base font-semibold text-white">ClientPilot</div>
           <button
             type="button"
-            onClick={() => setCollapsed((c) => !c)}
+            onClick={() => navigate(-1)}
             className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-dark-900 text-white transition hover:border-brand-500 hover:text-brand-400"
-            aria-label="Toggle sidebar width"
+            aria-label="Go back to previous page"
           >
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M6 9l6 6 6-6" />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
             </svg>
           </button>
         </div>

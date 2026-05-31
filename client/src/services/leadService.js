@@ -7,6 +7,7 @@ const leadService = {
   updateLead: (id, data) => api.put(`/leads/${id}`, data),
   deleteLead: (id) => api.delete(`/leads/${id}`),
   addNote: (id, content) => api.post(`/leads/${id}/notes`, { content }),
+  getActivities: (id) => api.get(`/leads/${id}/activities`),
 };
 
 export default leadService;
