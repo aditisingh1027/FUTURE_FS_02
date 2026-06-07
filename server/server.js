@@ -48,6 +48,27 @@ app.get('/api/health', (req, res) => {
   });
 });
 
+// Temporary debug endpoint — lists all registered route paths
+app.get('/api/debug/routes', (req, res) => {
+  const routes = [];
+  app._router.stack.forEach((layer) => {
+    if (layer.route) {
+      routes.push(`${Object.keys(layer.route.methods).join(',').toUpperCase()} ${layer.route.path}`);
+    } else if (layer.name === 'router' && layer.handle.stack) {
+      const prefix = layer.regexp.source
+        .replace('^\\\/','/')
+        .replace('(?=\\/|$)','')
+        .replace(/\\\/g, '/');
+      layer.handle.stack.forEach((r) => {
+        if (r.route) {
+          routes.push(`${Object.keys(r.route.methods).join(',').toUpperCase()} ${prefix}${r.route.path}`);
+        }
+      });
+    }
+  });
+  res.json({ registeredRoutes: routes });
+});
+
 // Register API Route handlers
 app.use('/api/auth', authRoutes);
 app.use('/api/leads', leadRoutes);
