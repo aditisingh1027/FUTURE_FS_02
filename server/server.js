@@ -57,27 +57,6 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// Debug: list registered routes
-app.get('/api/debug/routes', (req, res) => {
-  const routes = [];
-  app._router.stack.forEach((layer) => {
-    if (layer.route) {
-      const methods = Object.keys(layer.route.methods).join(',').toUpperCase();
-      routes.push(`${methods} ${layer.route.path}`);
-    } else if (layer.name === 'router' && layer.handle.stack) {
-      const match = layer.regexp.toString().match(/^\/\^\\\/([^\\]+)/);
-      const prefix = match ? '/' + match[1] : '';
-      layer.handle.stack.forEach((r) => {
-        if (r.route) {
-          const methods = Object.keys(r.route.methods).join(',').toUpperCase();
-          routes.push(`${methods} ${prefix}${r.route.path}`);
-        }
-      });
-    }
-  });
-  res.json({ registeredRoutes: routes });
-});
-
 // API routes
 app.use('/api/auth', authRoutes);
 app.use('/api/leads', leadRoutes);

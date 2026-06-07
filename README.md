@@ -1,145 +1,223 @@
-# ClientPilot
+# ClientPilot — Lead Management CRM
 
-**ClientPilot** is a full-stack Lead Management and CRM application designed to help freelancers, agencies, and small businesses efficiently manage client inquiries generated through websites, referrals, and marketing channels.
+**ClientPilot** is a full-stack CRM application built to help freelancers, agencies, and small businesses manage client leads from first contact through to conversion. It provides a centralized workspace for tracking prospects, logging follow-ups, recording interactions, and monitoring pipeline performance.
 
-The platform provides a centralized workspace for tracking prospects, managing follow-ups, recording client interactions, and monitoring lead conversion progress through a structured sales pipeline. The project was built to simulate a real-world business workflow while demonstrating modern full-stack development practices.
+> "I built this system to manage real clients."
 
 ---
 
-## Problem Statement
+## Live Demo
 
-Businesses often receive inquiries from multiple sources such as website contact forms, social media campaigns, referrals, and email outreach. Managing these leads manually through spreadsheets or emails can result in missed follow-ups, inconsistent tracking, and lost business opportunities.
+| Layer | URL |
+|---|---|
+| Frontend (Vercel) | https://future-fs-02-mocha-one.vercel.app |
+| Backend API (Render) | https://future-fs-02-km5o.onrender.com/api/health |
 
-ClientPilot addresses this problem by providing a streamlined CRM system that enables users to:
+**Demo credentials**
+```
+Email:    aditi@example.com
+Password: Aditi@1204
+```
 
-* Organize incoming leads in a centralized database
-* Track lead progression through different pipeline stages
-* Maintain conversation history and follow-up records
-* Monitor lead sources and conversion performance
-* Improve visibility into ongoing sales activities
+---
+
+## Internship Task Checklist
+
+This project was built as Task 2 of the Future Interns Full Stack Development Program.
+
+| Requirement | Status |
+|---|---|
+| Lead listing — name, email, source, status | ✅ |
+| Lead status updates — new / contacted / converted | ✅ |
+| Notes and follow-ups for each lead | ✅ |
+| Secure admin login (JWT authentication) | ✅ |
+| Search leads by name or email | ✅ (bonus) |
+| Filter leads by status and source | ✅ (bonus) |
+| Timestamp tracking on all records | ✅ (bonus) |
+| Analytics — total leads, conversions, conversion rate | ✅ (bonus) |
+| Pipeline stage distribution chart | ✅ (bonus) |
+| Lead source breakdown chart | ✅ (bonus) |
 
 ---
 
 ## Key Features
 
 ### Authentication & Security
-
-* JWT-based authentication
-* Secure password hashing using bcrypt
-* Role-based access control (Admin, Manager, Sales)
-* Protected API routes
-* Security middleware including Helmet and Rate Limiting
+- JWT-based authentication with HTTP-only cookies
+- Secure password hashing with bcryptjs
+- Role-based access control — Admin, Manager, Sales
+- Protected API routes via auth middleware
+- Helmet security headers and rate limiting
 
 ### Lead Management
+- Create, view, update, and delete leads
+- Track lead source (website, referral, cold call, social media, email)
+- Manage pipeline stage — New → Contacted → Qualified → Proposal → Won / Lost
+- Assign leads to team members
+- Schedule follow-up dates
 
-* Create, update, and delete leads
-* Lead source tracking
-* Pipeline stage management
-* Lead ownership assignment
-* Follow-up scheduling
-
-### Conversation Tracking
-
-* Maintain interaction history for every lead
-* Timestamped notes and updates
-* Activity timeline for auditability
+### Notes & Conversation Tracking
+- Add timestamped notes to any lead
+- Full activity timeline per lead (creation, notes, status changes)
+- Audit trail for every interaction
 
 ### Analytics Dashboard
-
-* Total prospects overview
-* Conversion metrics
-* Lead source distribution
-* Pipeline stage breakdown
-* Upcoming follow-up tracking
+- Total prospects, new prospects, converted leads, conversion rate
+- Pipeline stage distribution (donut chart)
+- Lead source breakdown (bar chart)
+- Follow-up tracking — overdue count, upcoming count, next due
 
 ### Search & Filtering
-
-* Search by lead name or email
-* Filter by status and source
-* Server-side query handling for scalability
-
-### User Experience
-
-* Responsive design across desktop, tablet, and mobile devices
-* Consistent UI components
-* Loading, error, and empty states
-* Intuitive navigation and dashboard layout
+- Real-time search by lead name or email
+- Filter by status and source
+- Server-side query handling
 
 ---
 
 ## Technology Stack
 
 ### Frontend
-
-* React.js
-* Vite
-* Tailwind CSS v4
-* React Router DOM
-* Axios
-* React Hot Toast
-* Recharts
+| Tool | Purpose |
+|---|---|
+| React.js | UI framework |
+| Vite | Build tool |
+| Tailwind CSS v4 | Styling |
+| React Router DOM | Client-side routing |
+| Axios | HTTP requests |
+| Recharts | Analytics charts |
+| React Hot Toast | Notifications |
 
 ### Backend
-
-* Node.js
-* Express.js
-* MongoDB
-* Mongoose
-* JWT Authentication
-* bcryptjs
-* Helmet
-* express-rate-limit
-* express-validator
+| Tool | Purpose |
+|---|---|
+| Node.js | Runtime |
+| Express.js | Web framework |
+| MongoDB Atlas | Database |
+| Mongoose | ODM |
+| jsonwebtoken | JWT auth |
+| bcryptjs | Password hashing |
+| Helmet | Security headers |
+| express-rate-limit | Rate limiting |
+| express-validator | Input validation |
 
 ---
-## Setup Instructions
+
+## System Architecture
+
+```
+Browser (React + Vite)
+        │  HTTPS requests
+        ▼
+  Vercel (Static hosting)
+        │
+        ▼
+  Render (Express API)
+        │
+        ▼
+  MongoDB Atlas (Database)
+```
+
+**Middleware order in Express:**
+```
+trust proxy → CORS → Helmet → Rate Limiter → JSON parser → Cookie parser → Routes → Error handler
+```
+
+---
+
+## Database Design
+
+### Users
+| Field | Type | Notes |
+|---|---|---|
+| name | String | required |
+| email | String | unique, required |
+| password | String | bcrypt hashed, hidden from queries |
+| role | Enum | admin / manager / sales |
+| timestamps | Date | createdAt, updatedAt |
+
+### Leads
+| Field | Type | Notes |
+|---|---|---|
+| name | String | required |
+| email | String | optional |
+| phone | String | optional |
+| source | Enum | website / referral / cold_call / social_media / email / other |
+| status | Enum | new / contacted / qualified / proposal / won / lost |
+| notes | Array | embedded timestamped notes |
+| followUpDate | Date | scheduled follow-up |
+| assignedTo | ObjectId | ref → User |
+| timestamps | Date | createdAt, updatedAt |
+
+### Activities
+| Field | Type | Notes |
+|---|---|---|
+| lead | ObjectId | ref → Lead |
+| performedBy | ObjectId | ref → User |
+| type | Enum | creation / note / status_change / call / email / meeting |
+| description | String | required |
+| timestamps | Date | createdAt, updatedAt |
+
+---
+
+## API Endpoints
+
+### Auth — `/api/auth`
+| Method | Route | Access | Description |
+|---|---|---|---|
+| POST | `/register` | Public | Register new user |
+| POST | `/login` | Public | Login, sets HTTP-only cookie |
+| POST | `/logout` | Private | Clear auth cookie |
+| GET | `/me` | Private | Get current user profile |
+
+### Leads — `/api/leads`
+| Method | Route | Access | Description |
+|---|---|---|---|
+| GET | `/` | Private | List leads (search, filter, paginate) |
+| POST | `/` | Private | Create new lead |
+| GET | `/:id` | Private | Get single lead |
+| PUT | `/:id` | Private | Update lead |
+| DELETE | `/:id` | Private | Delete lead |
+| POST | `/:id/notes` | Private | Add note to lead |
+| GET | `/:id/activities` | Private | Get activity timeline |
+
+### Dashboard — `/api/dashboard`
+| Method | Route | Access | Description |
+|---|---|---|---|
+| GET | `/stats` | Private | Stats cards (totals, conversion rate) |
+| GET | `/charts` | Private | Chart data (by status, by source) |
+| GET | `/followups` | Private | Follow-up tracking |
+
+### Health
+| Method | Route | Access | Description |
+|---|---|---|---|
+| GET | `/api/health` | Public | Server and DB status |
+
+---
+
+## Local Setup
 
 ### Prerequisites
+- Node.js v18+
+- npm
+- MongoDB Atlas account (free tier works) or local MongoDB
+- Git
 
-Before running the project, ensure the following are installed:
-
-* Node.js (v18 or later)
-* npm (comes with Node.js)
-* MongoDB Atlas account or local MongoDB installation
-* Git
-
----
-
-### Clone the Repository
+### 1. Clone the repository
 
 ```bash
 git clone https://github.com/aditisingh1027/FUTURE_FS_02.git
 cd FUTURE_FS_02
 ```
 
----
-
-### Install Dependencies
-
-Install dependencies for both frontend and backend:
+### 2. Install all dependencies
 
 ```bash
 npm run install-all
 ```
 
-Alternatively:
+### 3. Configure environment variables
 
-```bash
-cd client
-npm install
-
-cd ../server
-npm install
-```
-
----
-
-### Configure Environment Variables
-
-#### Backend
-
-Create a `.env` file inside the `server` folder:
-
+**Backend** — create `server/.env`:
 ```env
 PORT=5000
 NODE_ENV=development
@@ -149,181 +227,107 @@ JWT_SECRET=your_secure_secret_key
 JWT_EXPIRE=30d
 ```
 
-#### Frontend
-
-Create a `.env` file inside the `client` folder:
-
+**Frontend** — create `client/.env`:
 ```env
 VITE_API_BASE_URL=http://localhost:5000/api
 ```
 
----
+### 4. Seed demo data (optional)
 
-### Run the Application
+```bash
+npm run seed
+```
 
-From the project root:
+This creates a demo user (`aditi@example.com` / `Aditi@1204`, role: admin) and 19 sample leads with activities.
+
+To clear seeded data:
+```bash
+npm run seed:clear
+```
+
+### 5. Run the application
 
 ```bash
 npm run dev
 ```
 
-Or run frontend and backend separately:
-
-#### Backend
-
-```bash
-cd server
-npm run dev
-```
-
-#### Frontend
-
-```bash
-cd client
-npm run dev
-```
+| Service | URL |
+|---|---|
+| Frontend | http://localhost:5173 |
+| Backend API | http://localhost:5000 |
 
 ---
 
-### Access the Application
+## Production Deployment
 
-Frontend:
+### Frontend → Vercel
+- Root directory: `client`
+- Build command: `npm run build`
+- Output directory: `dist`
+- Environment variable: `VITE_API_BASE_URL=https://your-render-url.onrender.com/api`
 
-```text
-http://localhost:5173
-```
-
-Backend API:
-
-```text
-http://localhost:5000
-```
-
----
-
-### Build for Production
-
-Frontend:
-
-```bash
-npm --prefix client run build
-```
-
-Backend:
-
-```bash
-npm --prefix server run start
-```
-
-## System Architecture
-
-ClientPilot follows a modular MERN architecture with clear separation of concerns.
-
-```text
-Client (React)
-      │
-      ▼
-REST API (Express)
-      │
-      ▼
-Business Logic Layer
-      │
-      ▼
-MongoDB Database
-```
-
-The application is structured using reusable components, controllers, middleware, and service-oriented patterns to improve maintainability and scalability.
+### Backend → Render
+- Build command: `npm install`
+- Start command: `node server.js`
+- Environment variables: same as `server/.env` with `NODE_ENV=production`
 
 ---
 
-## Database Design
+## Project Structure
 
-### Users
-
-Stores application users and their access roles.
-
-### Leads
-
-Stores prospect information including:
-
-* Contact details
-* Lead source
-* Pipeline stage
-* Follow-up schedules
-* Notes and interactions
-
-### Activities
-
-Stores system-generated activity logs for lead tracking and auditing purposes.
+```
+FUTURE_FS_02/
+├── client/                  # React frontend
+│   ├── src/
+│   │   ├── components/      # Reusable UI components
+│   │   ├── context/         # Auth context
+│   │   ├── pages/           # Route-level page components
+│   │   ├── routes/          # Protected route guards
+│   │   └── services/        # Axios API service layer
+│   ├── vercel.json          # SPA rewrite rules
+│   └── vite.config.js       # Build config with production API URL
+│
+├── server/                  # Express backend
+│   ├── config/              # MongoDB connection
+│   ├── controllers/         # Route handlers
+│   ├── middleware/           # Auth, error, security, validation
+│   ├── models/              # Mongoose schemas
+│   ├── routes/              # Express routers
+│   ├── services/            # Activity logging service
+│   ├── utils/               # JWT token generator
+│   └── seed.js              # Demo data seeder
+│
+└── package.json             # Root scripts (dev, seed, install-all)
+```
 
 ---
 
 ## Learning Outcomes
 
-Through this project, I gained hands-on experience with:
+Through this project I gained hands-on experience with:
 
-* Full-stack application development using the MERN stack
-* Authentication and authorization workflows
-* REST API design and implementation
-* Database modeling with MongoDB
-* Secure application development practices
-* Business workflow automation
-* State management and frontend architecture
-* Deployment and production readiness
-
----
-
-## Local Setup
-
-### Install Dependencies
-
-```bash
-npm run install-all
-```
-
-### Configure Environment Variables
-
-Server:
-
-```env
-PORT=5000
-NODE_ENV=development
-CLIENT_URL=http://localhost:5173
-MONGO_URI=your_mongodb_connection_string
-JWT_SECRET=your_secure_secret
-JWT_EXPIRE=30d
-```
-
-Client:
-
-```env
-VITE_API_BASE_URL=http://localhost:5000/api
-```
-
-### Run Development Environment
-
-```bash
-npm run dev
-```
+- Full-stack MERN application development
+- JWT authentication with HTTP-only cookies
+- Role-based access control patterns
+- REST API design, validation, and error handling
+- MongoDB aggregation pipelines for analytics
+- Secure deployment across Vercel and Render
+- CORS configuration for cross-origin production environments
+- Reverse proxy trust configuration (Render + Express)
+- React context, hooks, and protected routing
 
 ---
 
 ## Future Enhancements
 
-* Email notification integration
-* Automated follow-up reminders
-* Lead assignment workflows
-* Advanced reporting and analytics
-* Export functionality (CSV/PDF)
-* Calendar integration
-* Real-time notifications
+- Email notification integration for follow-up reminders
+- Lead assignment workflows with notifications
+- CSV / PDF export
+- Calendar integration for follow-up scheduling
+- Real-time updates via WebSockets
 
 ---
 
 ## Author
 
-## Author
-
-Developed by **Aditi Kumari Singh** as part of the Full Stack Development Internship Program at Future Interns.
-
-This project focuses on building a real-world lead management system that demonstrates full-stack application development, secure authentication, database management, API integration, and modern frontend engineering using the MERN stack.
+Developed by **Aditi Kumari Singh** as part of the Full Stack Development Internship Program at **Future Interns** (Task 2 / 3).
