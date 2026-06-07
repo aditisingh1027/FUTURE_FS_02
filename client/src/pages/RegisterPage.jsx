@@ -44,7 +44,13 @@ const RegisterPage = () => {
       await register(form);
       navigate('/dashboard');
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Registration failed. Please try again.');
+      if (!err.response) {
+        console.error('[Register] Network error:', err.message, '| API base:', import.meta.env.VITE_API_BASE_URL);
+        toast.error(`Network error: could not reach the server. (${err.message})`);
+      } else {
+        console.error('[Register] Server error:', err.response.status, err.response.data);
+        toast.error(err.response.data?.message || 'Registration failed. Please try again.');
+      }
     } finally {
       setLoading(false);
     }
