@@ -11,29 +11,42 @@ const authRoutes = require('./routes/authRoutes');
 const leadRoutes = require('./routes/leadRoutes');
 const dashboardRoutes = require('./routes/dashboardRoutes');
 
-// Connect to MongoDB
 connectDB();
 
 const app = express();
 
-// Trust Render's reverse proxy (required for express-rate-limit and secure cookies)
+// Trust Render's reverse proxy — must be first
 app.set('trust proxy', 1);
 
-securityMiddleware(app);
-
-// Standard middlewares
+// CORS must be before everything else (helmet, rate limiter)
+// so preflight OPTIONS responses always carry the correct headers
 const allowedOrigins = [
-  process.env.CLIENT_URL,
+  'https://future-fs-02-mocha-one.vercel.app',
   'http://localhost:5173',
+  process.env.CLIENT_URL,
 ].filter(Boolean);
 
-app.use(cors({
+const corsOptions = {
   origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) return callback(null, true);
-    callback(new Error('Not allowed by CORS'));
+    // Allow server-to-server calls (no origin) and listed origins
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(null, false);
+    }
   },
   credentials: true,
-}));
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+};
+
+// Handle OPTIONS preflight before any other middleware can intercept it
+app.options('*', cors(corsOptions));
+app.use(cors(corsOptions));
+
+// Security middleware (helmet + rate limiter) runs after CORS
+securityMiddleware(app);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
