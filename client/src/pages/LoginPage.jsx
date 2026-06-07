@@ -57,7 +57,15 @@ const LoginPage = () => {
       await login(form);
       navigate(from, { replace: true });
     } catch (err) {
-      const message = err.response?.data?.message || 'Invalid credentials. Please try again.';
+      let message;
+      if (!err.response) {
+        // Network error, CORS block, or wrong API URL — not a credentials issue
+        message = `Network error: could not reach the server. (${err.message})`;
+        console.error('[Login] No response received:', err.message, '| API base:', import.meta.env.VITE_API_BASE_URL);
+      } else {
+        message = err.response.data?.message || 'Invalid credentials. Please try again.';
+        console.error('[Login] Server error:', err.response.status, err.response.data);
+      }
       setErrors((prev) => ({ ...prev, general: message }));
     } finally {
       setLoading(false);
