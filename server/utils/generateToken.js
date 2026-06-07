@@ -18,10 +18,12 @@ const generateToken = (res, userId) => {
   // Determine cookie lifespan (default 30 days)
   const cookieExpiry = 30 * 24 * 60 * 60 * 1000; 
 
+  const isProduction = process.env.NODE_ENV === 'production';
+
   const cookieOptions = {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'strict',
+    secure: isProduction,
+    sameSite: isProduction ? 'none' : 'strict',
     maxAge: cookieExpiry,
   };
 

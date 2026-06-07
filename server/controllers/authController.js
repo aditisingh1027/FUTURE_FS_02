@@ -103,11 +103,12 @@ const loginUser = async (req, res, next) => {
 // @access  Private
 const logoutUser = async (req, res, next) => {
   try {
+    const isProduction = process.env.NODE_ENV === 'production';
     res.cookie('token', '', {
       httpOnly: true,
-      expires: new Date(0), // Expirers immediately
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      expires: new Date(0),
+      secure: isProduction,
+      sameSite: isProduction ? 'none' : 'strict',
     });
 
     res.status(200).json({
