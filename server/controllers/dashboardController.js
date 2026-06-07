@@ -1,36 +1,30 @@
 const Lead = require('../models/Lead');
 const mongoose = require('mongoose');
 
-// @desc    Get dashboard analytics stats (Admin/Manager see global stats, Sales see assigned leads only)
+// Build match filter: sales users only see their assigned leads
+const getRoleFilter = (user) => {
+  if (user.role === 'sales') {
+    return { assignedTo: new mongoose.Types.ObjectId(user.id) };
+  }
+  return {};
+};
+
+// @desc    Get dashboard stats cards
 // @route   GET /api/dashboard/stats
 // @access  Private
 const getDashboardStats = async (req, res, next) => {
   try {
-    let matchFilter = {};
+    const matchFilter = getRoleFilter(req.user);
 
-    // Apply role-based scoping
-    if (req.user.role === 'sales') {
-      matchFilter.assignedTo = new mongoose.Types.ObjectId(req.user.id);
-    }
-
-    // Run MongoDB Aggregation Pipeline
     const stats = await Lead.aggregate([
-      {
-        $match: matchFilter,
-      },
+      { $match: matchFilter },
       {
         $group: {
           _id: null,
           totalLeads: { $sum: 1 },
-          newLeads: {
-            $sum: { $cond: [{ $eq: ['$status', 'new'] }, 1, 0] },
-          },
-          contactedLeads: {
-            $sum: { $cond: [{ $eq: ['$status', 'contacted'] }, 1, 0] },
-          },
-          convertedLeads: {
-            $sum: { $cond: [{ $eq: ['$status', 'won'] }, 1, 0] },
-          },
+          newLeads: { $sum: { $cond: [{ $eq: ['$status', 'new'] }, 1, 0] } },
+          contactedLeads: { $sum: { $cond: [{ $eq: ['$status', 'contacted'] }, 1, 0] } },
+          convertedLeads: { $sum: { $cond: [{ $eq: ['$status', 'won'] }, 1, 0] } },
         },
       },
       {
@@ -40,7 +34,6 @@ const getDashboardStats = async (req, res, next) => {
           newLeads: 1,
           contactedLeads: 1,
           convertedLeads: 1,
-          // Calculate conversion rate: (convertedLeads / totalLeads) * 100
           conversionRate: {
             $cond: [
               { $gt: ['$totalLeads', 0] },
@@ -52,8 +45,7 @@ const getDashboardStats = async (req, res, next) => {
       },
     ]);
 
-    // Handle empty database case gracefully
-    const responseStats = stats[0] || {
+    const result = stats[0] || {
       totalLeads: 0,
       newLeads: 0,
       contactedLeads: 0,
@@ -61,66 +53,41 @@ const getDashboardStats = async (req, res, next) => {
       conversionRate: 0,
     };
 
-    // Round conversionRate to 1 decimal place
-    responseStats.conversionRate = Math.round(responseStats.conversionRate * 10) / 10;
+    result.conversionRate = Math.round(result.conversionRate * 10) / 10;
 
-    res.status(200).json({
-      success: true,
-      stats: responseStats,
-    });
+    res.status(200).json({ success: true, stats: result });
   } catch (error) {
     next(error);
   }
 };
 
+// @desc    Get chart data (pipeline stage + source breakdown)
+// @route   GET /api/dashboard/charts
+// @access  Private
 const getDashboardCharts = async (req, res, next) => {
   try {
-    let matchFilter = {};
-    if (req.user.role === 'sales') {
-      matchFilter.assignedTo = new mongoose.Types.ObjectId(req.user.id);
-    }
+    const matchFilter = getRoleFilter(req.user);
 
-    const statusAggregation = await Lead.aggregate([
-      { $match: matchFilter },
-      {
-        $group: {
-          _id: '$status',
-          count: { $sum: 1 },
-        },
-      },
-      {
-        $project: {
-          _id: 0,
-          status: '$_id',
-          count: 1,
-        },
-      },
-      { $sort: { status: 1 } },
-    ]);
-
-    const sourceAggregation = await Lead.aggregate([
-      { $match: matchFilter },
-      {
-        $group: {
-          _id: '$source',
-          count: { $sum: 1 },
-        },
-      },
-      {
-        $project: {
-          _id: 0,
-          source: '$_id',
-          count: 1,
-        },
-      },
-      { $sort: { source: 1 } },
+    const [byStatus, bySource] = await Promise.all([
+      Lead.aggregate([
+        { $match: matchFilter },
+        { $group: { _id: '$status', count: { $sum: 1 } } },
+        { $project: { _id: 0, status: '$_id', count: 1 } },
+        { $sort: { status: 1 } },
+      ]),
+      Lead.aggregate([
+        { $match: matchFilter },
+        { $group: { _id: '$source', count: { $sum: 1 } } },
+        { $project: { _id: 0, source: '$_id', count: 1 } },
+        { $sort: { source: 1 } },
+      ]),
     ]);
 
     res.status(200).json({
       success: true,
       charts: {
-        byStatus: statusAggregation,
-        bySource: sourceAggregation,
+        byStatus: byStatus || [],
+        bySource: bySource || [],
       },
     });
   } catch (error) {
@@ -128,24 +95,19 @@ const getDashboardCharts = async (req, res, next) => {
   }
 };
 
+// @desc    Get follow-up tracking data
+// @route   GET /api/dashboard/followups
+// @access  Private
 const getFollowUps = async (req, res, next) => {
   try {
-    let matchFilter = { followUpDate: { $ne: null } };
-    if (req.user.role === 'sales') {
-      matchFilter.assignedTo = new mongoose.Types.ObjectId(req.user.id);
-    }
+    const roleFilter = getRoleFilter(req.user);
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    const upcomingFilter = {
-      ...matchFilter,
-      followUpDate: { $gte: today },
-    };
-    const overdueFilter = {
-      ...matchFilter,
-      followUpDate: { $lt: today },
-    };
+    const baseFilter = { ...roleFilter, followUpDate: { $ne: null } };
+    const upcomingFilter = { ...roleFilter, followUpDate: { $gte: today } };
+    const overdueFilter = { ...roleFilter, followUpDate: { $lt: today } };
 
     const [upcomingCount, overdueCount, upcoming, overdue] = await Promise.all([
       Lead.countDocuments(upcomingFilter),
@@ -169,6 +131,7 @@ const getFollowUps = async (req, res, next) => {
         overdueCount,
         upcoming,
         overdue,
+        nextDue: upcoming[0] || null,
       },
     });
   } catch (error) {

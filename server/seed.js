@@ -10,6 +10,7 @@ dotenv.config();
 const SEED_USER_EMAIL = 'aditi@example.com';
 const SEED_USER_NAME = 'Aditi Kumari Singh';
 const SEED_USER_PASSWORD = 'Aditi@1204';
+const SEED_USER_ROLE = 'admin';
 
 const leadSamples = [
   {
@@ -200,13 +201,13 @@ const runSeed = async () => {
       name: SEED_USER_NAME,
       email: SEED_USER_EMAIL,
       password: SEED_USER_PASSWORD,
-      role: 'sales',
+      role: SEED_USER_ROLE,
     });
   } else {
-    const needsUpdate = user.name !== SEED_USER_NAME || user.role !== 'sales';
+    const needsUpdate = user.name !== SEED_USER_NAME || user.role !== SEED_USER_ROLE;
     if (needsUpdate) {
       user.name = SEED_USER_NAME;
-      user.role = 'sales';
+      user.role = SEED_USER_ROLE;
       await user.save();
     }
   }
