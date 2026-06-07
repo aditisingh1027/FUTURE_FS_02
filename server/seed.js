@@ -209,6 +209,9 @@ const runSeed = async () => {
       user.name = SEED_USER_NAME;
       user.role = SEED_USER_ROLE;
       await user.save();
+      console.log(`Updated seed user: role set to '${SEED_USER_ROLE}'.`);
+    } else {
+      console.log(`Seed user already up to date (role: '${user.role}').`);
     }
   }
 
